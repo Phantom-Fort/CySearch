@@ -23,7 +23,7 @@ conn.autocommit = True
 cursor = conn.cursor()
 
 # Check if target database exists
-cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,))
+cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,))
 exists = cursor.fetchone()
 
 if not exists:
@@ -45,7 +45,7 @@ conn = psycopg2.connect(
 )
 cursor = conn.cursor()
 
-# Create the table if it doesn't exist
+# Create the table with additional columns
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS github_repos (
     id SERIAL PRIMARY KEY,
@@ -54,11 +54,14 @@ CREATE TABLE IF NOT EXISTS github_repos (
     stars INTEGER,
     forks INTEGER,
     last_updated TIMESTAMP,
-    readme TEXT
+    readme TEXT,
+    category TEXT,
+    summary TEXT,
+    topics TEXT[]
 );
 """)
 conn.commit()
-print("✅ Table 'github_repos' ensured.")
+print("✅ Table 'github_repos' ensured with new fields (category, summary, topics).")
 
 cursor.close()
 conn.close()
